@@ -1,0 +1,9 @@
+[package]
+name = "attricat-stock-valuation-core"
+version = "0.1.0"
+license = "MIT"
+edition = "2024"
+publish = false
+
+[dependencies]
+rust_decimal = { version = "1", default-features = false, features = ["std"] }

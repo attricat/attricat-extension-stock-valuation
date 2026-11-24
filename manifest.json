@@ -1,0 +1,425 @@
+{
+  "manifest_version": 1,
+  "name": "Stock Valuation",
+  "version": "0.1.0",
+  "description": "Values stock at a moving weighted average and production output at its order's material cost.",
+  "icons": {
+    "48": "assets/icon-48.svg"
+  },
+  "attricat": {
+    "id": "attricat-stock-valuation",
+    "host_api": ">=1.1.0, <2.0.0"
+  },
+  "permissions": [
+    "attricat.read",
+    "attricat.write",
+    "events.subscribe",
+    "configuration.read",
+    "logging.write",
+    "client.commands",
+    "client.record_action",
+    "client.notification",
+    "client.refresh"
+  ],
+  "artifacts": [
+    {
+      "id": "server",
+      "kind": "server_wasm",
+      "path": "dist/server.wasm"
+    }
+  ],
+  "configuration": {
+    "version": 1,
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "decimal_places": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "stock_item": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "blueprint"
+          ],
+          "properties": {
+            "blueprint": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "maxLength": 64
+            },
+            "quantity": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "maxLength": 64
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "maxLength": 64
+            },
+            "average_cost": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "maxLength": 64
+            }
+          }
+        },
+        "receipts": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "blueprint"
+            ],
+            "properties": {
+              "blueprint": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "quantity": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "unit_price": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "stock_item": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "unit_cost": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "value": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "exchange_rate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "reverses": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              }
+            }
+          }
+        },
+        "issues": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "blueprint"
+            ],
+            "properties": {
+              "blueprint": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "stock_item": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "unit_cost": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "value": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              },
+              "reverses": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-z][a-z0-9_]*$",
+                "maxLength": 64
+              }
+            }
+          }
+        },
+        "production": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "order",
+            "material",
+            "output"
+          ],
+          "properties": {
+            "order": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "blueprint"
+              ],
+              "properties": {
+                "blueprint": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "material_cost": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "production_cost": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                }
+              }
+            },
+            "material": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "blueprint"
+              ],
+              "properties": {
+                "blueprint": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "order": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "stock_item": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "item": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "unit_cost": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "value": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "base_quantity": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "blueprint"
+              ],
+              "properties": {
+                "blueprint": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "order": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "stock_item": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "kind": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "item": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "base_quantity": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "scrap_price": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "unit_cost": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                },
+                "value": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_]*$",
+                  "maxLength": 64
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "server": {
+    "event_handlers": [
+      {
+        "id": "revalue-on-stock-change",
+        "event_types": [
+          "record.updated.v1"
+        ],
+        "handler": "handle-event"
+      }
+    ],
+    "commands": [
+      {
+        "id": "recalculate-action",
+        "handler": "recalculate-action",
+        "request_schema": {
+          "type": "object",
+          "required": [
+            "action_id",
+            "blueprint_id",
+            "blueprint_version",
+            "context_id",
+            "record_ids"
+          ],
+          "properties": {
+            "action_id": {
+              "type": "string"
+            },
+            "outlet": {
+              "type": "string"
+            },
+            "context_version": {
+              "type": "integer"
+            },
+            "blueprint_id": {
+              "type": "string",
+              "minLength": 36,
+              "maxLength": 36
+            },
+            "blueprint_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "context_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "record_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 36,
+                "maxLength": 36
+              },
+              "maxItems": 50
+            },
+            "locale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "response_schema": {
+          "type": "object",
+          "required": [
+            "notification",
+            "refresh"
+          ],
+          "properties": {
+            "notification": {
+              "type": "object",
+              "required": [
+                "message",
+                "severity"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "severity": {
+                  "type": "string"
+                }
+              }
+            },
+            "refresh": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "ui": [
+    {
+      "id": "recalculate-valuation",
+      "version": 1,
+      "kind": "action",
+      "outlet": "record_action",
+      "title": "Recalculate valuation",
+      "invoke": {
+        "command": "recalculate-action"
+      },
+      "translations": {
+        "pl": {
+          "title": "Przelicz wycenę"
+        }
+      },
+      "icon": "calculator",
+      "when": {
+        "requires_write": true
+      }
+    }
+  ]
+}

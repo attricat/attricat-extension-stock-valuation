@@ -1,0 +1,10 @@
+[workspace]
+members = ["server/valuation-core", "server/component"]
+resolver = "2"
+
+# Smaller components compile faster in the host (Cranelift runs on first use).
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
