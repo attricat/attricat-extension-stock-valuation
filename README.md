@@ -67,6 +67,21 @@ attributes out of its `lock` list, or the write is refused.
 | `server.commands` + `record_action` | **Recalculate valuation** (Polish: *Przelicz wycenę*) on a stock item, a document or an order |
 | `attricat.read.v1` | `movements` for a stock item's history, `incoming` for an order's lines |
 
+### Show the action on a blueprint
+
+**Recalculate valuation** appears only on records whose blueprint lists it in
+its detail view (Attricat 1.8 or later). List it on the stock item, document
+and order blueprints:
+
+```yaml
+views:
+  detail:
+    type: stack
+    extensions: [attricat-stock-valuation/recalculate-valuation]
+```
+
+A `detail` stack without `children` keeps the default record layout.
+
 ## Development
 
 ```sh
